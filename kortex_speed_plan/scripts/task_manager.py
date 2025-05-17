@@ -204,19 +204,14 @@ class TaskManager:
 
                     if  now - prev > 1:
                         self.damping_control()
-                        prev = now     
-            
-                
-            
+                        prev = now                       
             
             rospy.sleep(0.1)
               
 
-
 if __name__ == '__main__':
-    config_path = "/home/heinrich/kinova/src/kortex_speed_plan/scripts/task.yaml"
+    config_path = "/home/heinrich/kinova/src/kortex_speed_plan/scripts/config/task.yaml"
     with open(config_path, "r", encoding="utf-8") as file:
-            data = yaml.safe_load(file)
-           
+            data = yaml.safe_load(file)        
     task_manager = TaskManager(data)
     task_manager.run()

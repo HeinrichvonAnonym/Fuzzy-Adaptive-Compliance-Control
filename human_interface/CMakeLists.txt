@@ -166,7 +166,7 @@ include_directories(
 catkin_install_python(PROGRAMS
   scripts/human_interface.py
   scripts/tcp_server.py
-  scripts/camera_modify.py
+  scripts/human_frame_subscriber.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

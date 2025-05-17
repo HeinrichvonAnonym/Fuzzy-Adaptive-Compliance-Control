@@ -66,7 +66,7 @@
   <build_export_depend>sensor_msgs</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
   <build_export_depend>visualization_msgs</build_export_depend>
-  <build_export_depend>gripper_control</build_export_depend>
+  <!-- <build_export_depend>gripper_control</build_export_depend> -->
   <build_export_depend>shape_msgs</build_export_depend>
   <build_depend>moveit_ros_planning_interface</build_depend>
 	<build_depend>moveit_visual_tools</build_depend>
@@ -85,7 +85,7 @@
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>visualization_msgs</exec_depend>
-  <exec_depend>gripper_control</exec_depend>
+  <!-- <exec_depend>gripper_control</exec_depend> -->
   <exec_depend>moveit_ros_planning_interface</exec_depend>
 	<exec_depend>moveit_visual_tools</exec_depend>
   <exec_depend>moveit_core</exec_depend>

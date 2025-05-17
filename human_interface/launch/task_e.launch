@@ -1,0 +1,12 @@
+<launch>
+
+  <node pkg="human_interface" type="human_nterface.py" name="human_nterface" output="screen">
+  </node>
+
+  <node pkg="human_interface" type="tcp_server.py" name="reference_selector" output="screen">
+  </node>
+
+  <node pkg="human_interface" type="human_frame_subscriber.py" name="rrt_moveit_plan" output="screen">
+  </node>
+  
+</launch>

@@ -1,0 +1,70 @@
+algo_name: "facc" # to replace the topic ns: rrt
+
+link_names: 
+  - "shoulder_link"
+  - "half_arm_1_link"
+  - "half_arm_2_link"
+  - "forearm_link"
+  - "spherical_wrist_1_link"
+  - "spherical_wrist_2_link", 
+  - "tool_frame"
+
+hard_ware_jointstate_topic: "/base_feedback/joint_state"
+
+jointstate_msg_topic: '/joint_states'
+base_link: "base_link"
+eef_link_names: 
+  - "tool_frame"
+  - "spherical_wrist_2_link"
+  - "forearm_link"
+dofs: [7, 6, 4]
+
+tool_mass: 0
+tool_com: [0, 0, 0]
+
+link_params:
+    # name: [mass, [com_x, com_y, com_z], [I_xx, I_yy, I_zz, I_xy, I_xz, I_yz]]
+    'shoulder_link':          [1.4699,      [-2.522E-05, -0.0075954, -0.088651],      [0.0043269, 0.0044703, 0.0014532, 2.5E-07, 9.4E-07, 0.0001016]],
+    'half_arm_1_link':        [1.2357745,   [-4.533E-05, -0.12951716, -0.01354356],   [0.0115879, 0.00104574, 0.0116684, -1.05E-06, 5.0E-08, -0.00096902]],
+    'half_arm_2_link':        [1.2357745,   [-4.533E-05, -0.00361448, -0.14407154],   [0.01009873, 0.01017801, 0.00104697, 5.7E-07, 1.89E-06, 0.00013166]],
+    'forearm_link':           [0.89954802,  [-0.00030188, -0.104938, -0.01559665],    [0.00889854, 0.00060297, 0.00898975, 1.98E-05, -2.39E-06, -0.00074456]],
+    'spherical_wrist_1_link': [0.70588351,  [-0.00035363, -0.00659443, -0.07560343],  [0.00145671, 0.00145189, 0.00039299, 3.35E-06, 7.62E-06, 0.00012055]],
+    'spherical_wrist_2_link': [0.70583924,  [-0.00035547, -0.06159424, -0.00850171],  [0.00187208, 0.00041077, 0.0018494, 6.1E-06, -2.17E-06, -0.00033774]],
+    'tool_frame':             [0.31573861,  [  -0.00010337,0.00015804, -0.02874642],  [0.00018712, 0.00019576, 0.0002257, 6.0E-08, 7.7E-07, -1.62E-06]]
+
+# theta d a alpha
+dh_params:
+  - [0,   -0.2848,  0,  3.141592653589793]
+  - [0,   0,        0,  1.5707963267948966]
+  - [0,   -0.4208,  0,  -1.5707963267948966]
+  - [0,   0,        0,  1.5707963267948966]
+  - [0,   -0.3143,  0,  -1.5707963267948966]
+  - [0,   0,        0,  1.5707963267948966]
+  - [0,   -0.2859,  0,  -1.5707963267948966]
+  - [0,   -0.18,    0,  3.141592653589793]
+
+USE_FUZZY: True
+
+smooth_att: 0.15
+k_att_base: 5000 
+obj_k_rep: 500
+k_att_cart: 8000
+k_mini: 0.9
+
+# if not USE_FUZZY:
+human_influence_margin_nf: 0.35
+human_safe_margin_nf: 0.05
+human_k_rep_nf: 6000
+k_lamda_nf: 100
+# else:
+human_influence_margin: 0.8
+human_safe_margin: 0.05
+human_k_rep: 2000
+k_lamda: 500
+
+obj_influence_margin: 0.1
+obj_safe_margin: 0.03
+
+END_EFFECTOR: 0
+WRIST: 1
+FOREARM: 2

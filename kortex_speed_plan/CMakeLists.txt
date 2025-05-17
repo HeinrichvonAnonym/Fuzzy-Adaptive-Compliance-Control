@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   visualization_msgs
-  gripper_control
+  # gripper_control
   moveit_ros_planning_interface
   moveit_visual_tools
   moveit_core
@@ -155,7 +155,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 
-add_executable(moveit_interface src/moveit_interface.cpp)
+# add_executable(moveit_interface src/moveit_interface.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -168,9 +168,9 @@ add_executable(moveit_interface src/moveit_interface.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(moveit_interface
-  ${catkin_LIBRARIES}
-)
+# target_link_libraries(moveit_interface
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
@@ -182,7 +182,6 @@ target_link_libraries(moveit_interface
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
-  scripts/moveit_plan_not_using.py
   scripts/rrt_moveit_plan.py
   scripts/reference_selector.py
   scripts/apf_controller.py
@@ -190,7 +189,7 @@ catkin_install_python(PROGRAMS
   scripts/pose_publisher.py
   scripts/jacobian_publisher.py
   scripts/task_manager.py
-  scripts/sim_pid_executer.py
+
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

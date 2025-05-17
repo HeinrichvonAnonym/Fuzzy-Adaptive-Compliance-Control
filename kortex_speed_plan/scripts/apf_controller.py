@@ -25,7 +25,7 @@ control with force balance detection
 USE_FUZZY = True
 smooth_att = 0.15
 k_att_base = 5000 # 基础引力系数
-human_k_rep = 1500
+human_k_rep = 2000
 obj_k_rep = 500
 k_att_cart = 8000
 k_lamda = 500
@@ -33,7 +33,7 @@ k_lamda = 500
 if not USE_FUZZY:
     human_influence_margin = 0.35
     human_safe_margin = 0.05
-    human_k_rep = 6500
+    human_k_rep = 6000
     k_lamda = 100
 else:
     human_influence_margin = 0.8

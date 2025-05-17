@@ -117,6 +117,6 @@ class KortexTeach:
         self.listener.join()
 
 if __name__ == '__main__':
-    output = "/home/heinrich/kinova/src/kortex_speed_plan/scripts/task.yaml"
+    output = "/home/heinrich/kinova/src/kortex_speed_plan/scripts/config/task.yaml"
     teach = KortexTeach(output)
     teach.run()

@@ -1,32 +1,24 @@
 <launch>
-  <!-- 设置通用命名空间和机器人名称 -->
-  <arg name="robot_name" default="kortex_arm" />
-  <arg name="ns" default="$(arg robot_name)" />
-  
+
   <!-- 启动PID执行器 -->
   <node pkg="kortex_speed_plan" type="pid_executer.py" name="pid_executer" output="screen">
-    <remap from="in/joint_velocity" to="/$(arg ns)/in/joint_velocity" />
-    <remap from="/base_feedback/joint_state" to="/$(arg ns)/base_feedback/joint_state" />
   </node>
   
   <!-- 启动参考选择器 -->
   <node pkg="kortex_speed_plan" type="reference_selector.py" name="reference_selector" output="screen">
-    <remap from="/base_feedback/joint_state" to="/$(arg ns)/base_feedback/joint_state" />
   </node>
   
   <!-- 启动RRT移动规划器 -->
   <node pkg="kortex_speed_plan" type="rrt_moveit_plan.py" name="rrt_moveit_plan" output="screen">
-    <remap from="/base_feedback/joint_state" to="/$(arg ns)/base_feedback/joint_state" />
   </node>
   
   <!-- 启动APF控制器 -->
   <node pkg="kortex_speed_plan" type="apf_controller.py" name="apf_controller" output="screen">
-    <remap from="/base_feedback/joint_state" to="/$(arg ns)/base_feedback/joint_state" />
   </node>
   
   <!-- 启动位姿发布器 -->
-  <node pkg="ortex_speed_plan" type="pose_publisher.py" name="pose_publisher" output="screen">
+  <node pkg="kortex_speed_plan" type="task_manager.py" name="task_manager" output="screen">
   </node>
 
-  </group>
+
 </launch>

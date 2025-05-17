@@ -1,0 +1,19 @@
+cam_topis:
+  - '/kinect2/hd/image_color'
+  # - zed2i
+
+wide_angles:  [[87, 53], # degree
+              [130, 70]]
+
+cam1_pos: [0.0, 0.0, 0.0]  # m
+cam1_rot : [0.0, 0.0, 0.0] # degree
+
+cam2_to_cam1_pos: [0.0, 0.0, 0.0] # m
+cam2_to_cam1_rot_mat : [[1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, 0.0, 1.0]]
+
+cam3_to_cam1_pos: [0.0, 0.0, 0.0] # m
+cam3_to_cam1_rot_mat : [[1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, 0.0, 1.0]]
