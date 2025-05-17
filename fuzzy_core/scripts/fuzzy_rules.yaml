@@ -1,0 +1,220 @@
+embedding_rules:
+  distance:
+    too close: {mid: 0.05, area: 0.2}
+    close: {mid: 0.15, area: 0.4}
+    not close: {mid: 0.4, area: 0.3}
+    far: {mid: 0.8, area: 1.}
+  velocity:
+    too fast: {mid: 1.5, area: 0.6}
+    fast: {mid: 1.2, area: 0.6}
+    not fast: {mid: 0.8, area: 0.8}
+    mid: {mid: 0.4, area: 0.8}
+    slow: {mid: 0.0, area: 0.8}
+  euclidean:
+    stable: {mid: 0.2, area: 0.8}
+    increase: {mid: 0.8, area: 0.8}
+  weight:
+    light: {mid: -1.0, area: 0.67}
+    midium: {mid: -0.33, area: 0.67}
+    heavy: {mid: 0.33, area: 0.67}
+    very heavy: {mid: 1, area: 0.67}
+
+
+logic_rules:
+  FPI:
+    - type: AND
+      condition:
+        distance: too close
+        velocity: too fast
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: too close
+        velocity: fast
+      action:
+        weight: midium
+
+    - type: AND
+      condition:
+        distance: too close
+        velocity: not fast
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: too close
+        velocity: mid
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: too close
+        velocity: slow
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: close
+        velocity: too fast
+      action:
+        weight: very heavy
+
+    - type: AND
+      condition:
+        distance: close
+        velocity: fast
+      action:
+        weight: heavy
+
+    - type: AND
+      condition:
+        distance: close
+        velocity: not fast
+      action:
+        weight: heavy
+
+    - type: AND
+      condition:
+        distance: close
+        velocity: mid
+      action:
+        weight: midium
+
+    - type: AND
+      condition:
+        distance: close
+        velocity: slow
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: not close
+        velocity: too fast
+      action:
+        weight: very heavy
+
+    - type: AND
+      condition:
+        distance: not close
+        velocity: fast
+      action:
+        weight: heavy
+
+    - type: AND
+      condition:
+        distance: not close
+        velocity: not fast
+      action:
+        weight: midium
+
+    - type: AND
+      condition:
+        distance: not close
+        velocity: mid
+      action:
+        weight: midium
+
+    - type: AND
+      condition:
+        distance: not close
+        velocity: slow
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: far
+        velocity: too fast
+      action:
+        weight: very heavy
+
+    - type: AND
+      condition:
+        distance: far
+        velocity: fast
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: far
+        velocity: not fast
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: far
+        velocity: mid
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: far
+        velocity: slow
+      action:
+        weight: light
+  
+  FRI:
+    - type: AND
+      condition:
+        distance: too close
+        euclidean: stable
+      action:
+        weight: very heavy
+
+    - type: AND
+      condition:
+        distance: close
+        euclidean: stable
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: not close
+        euclidean: stable
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: far
+        euclidean: stable
+      action:
+        weight: light
+
+    - type: AND
+      condition:
+        distance: too close
+        euclidean: increase
+      action:
+        weight: very heavy
+
+    - type: AND
+      condition:
+        distance: close
+        euclidean: increase
+      action:
+        weight: heavy
+
+    - type: AND
+      condition:
+        distance: not close
+        euclidean: increase
+      action:
+        weight: midium
+
+    - type: AND
+      condition:
+        distance: far
+        euclidean: increase
+      action:
+        weight: light
