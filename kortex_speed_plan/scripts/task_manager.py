@@ -210,7 +210,7 @@ class TaskManager:
               
 
 if __name__ == '__main__':
-    config_path = "/home/heinrich/kinova/src/kortex_speed_plan/scripts/config/task.yaml"
+    config_path = "/home/heinrich/kinova/src/kortex_speed_plan/config/task.yaml"
     with open(config_path, "r", encoding="utf-8") as file:
             data = yaml.safe_load(file)        
     task_manager = TaskManager(data)

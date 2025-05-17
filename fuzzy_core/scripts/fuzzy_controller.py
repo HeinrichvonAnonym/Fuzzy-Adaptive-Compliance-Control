@@ -300,7 +300,7 @@ class FuzzyController:
         rospy.spin()
 
 def main(stdscr):
-    with open("/home/heinrich/fuzzy_ws/src/fuzzy_core/scripts/fuzzy_rules.yaml", "r", encoding="utf-8") as file:
+    with open("/home/heinrich/fuzzy_ws/src/fuzzy_core/config/fuzzy_rules.yaml", "r", encoding="utf-8") as file:
         data = yaml.safe_load(file)
         embedding_rules = data["embedding_rules"]
         logic_rules = data["logic_rules"]

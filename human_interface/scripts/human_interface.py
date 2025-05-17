@@ -3,10 +3,8 @@ edited by Heinrich 17,Jan 2025
 """
 
 import rospy
-# from zess_msgs.msg import ObjectsStamped, Object, Skeleton3D, Keypoint3D, Keypoint2Df
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PoseArray, Pose
-# from kompi_msgs.msg import HumanTrajectory
 import mediapipe as mp
 # import cv bridge
 from cv_bridge import CvBridge

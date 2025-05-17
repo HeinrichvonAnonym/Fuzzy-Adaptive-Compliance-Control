@@ -9,12 +9,10 @@ project(human_interface)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
-  kompi_msgs
   roscpp
   rospy
   std_msgs
   visualization_msgs
-  zess_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -73,9 +71,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
-#   DEPENDENCIES
-#   geometry_msgs#   kompi_msgs#   std_msgs#   visualization_msgs#   zess_msgs
-# )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -109,7 +104,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES human_interface
-#  CATKIN_DEPENDS geometry_msgs kompi_msgs roscpp rospy std_msgs visualization_msgs zess_msgs
+#  CATKIN_DEPENDS geometry_msgs kompi_msgs roscpp rospy std_msgs visualization_msgs 
 #  DEPENDS system_lib
 )
 
