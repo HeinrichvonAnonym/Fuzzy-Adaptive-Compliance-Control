@@ -186,9 +186,9 @@ catkin_install_python(PROGRAMS
   scripts/reference_selector.py
   scripts/apf_controller.py
   scripts/pid_executer.py
-  scripts/pose_publisher.py
   scripts/jacobian_publisher.py
   scripts/task_manager.py
+  scripts/teach.py
 
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

@@ -162,7 +162,6 @@ include_directories(
 catkin_install_python(PROGRAMS
   scripts/fuzzy_controller.py
   scripts/fuzzy_monitor.py
-  scripts/sim_human_frame_subscriber.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
