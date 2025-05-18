@@ -161,12 +161,12 @@ class FuzzyController:
         self.fri_core = FuzzzyCore(embedding_rules, logic_rules, "FRI", "distance", "euclidean", "weight")
         rospy.loginfo("Fuzzy core initialized")
 
-        rospy.Subscriber("/rrt/fuzzy/d_euclidean", Float32, self.euclidean_callback)
-        rospy.Subscriber("/rrt/fuzzy/velocity", Float32, self.velocity_callback)
-        rospy.Subscriber("/rrt/fuzzy/distance", Float32, self.min_distance_callback)
-        self.pi_publisher = rospy.Publisher("/rrt/pi_weight", Float32, queue_size=10)
-        self.ri_publisher = rospy.Publisher("/rrt/ri_weight", Float32, queue_size=10)
-        self.raw_pi_publisher = rospy.Publisher("/rrt/raw_pi_weight", Float32, queue_size=10)
+        rospy.Subscriber("/facc/fuzzy/d_euclidean", Float32, self.euclidean_callback)
+        rospy.Subscriber("/facc/fuzzy/velocity", Float32, self.velocity_callback)
+        rospy.Subscriber("/facc/fuzzy/distance", Float32, self.min_distance_callback)
+        self.pi_publisher = rospy.Publisher("/facc/pi_weight", Float32, queue_size=10)
+        self.ri_publisher = rospy.Publisher("/facc/ri_weight", Float32, queue_size=10)
+        self.raw_pi_publisher = rospy.Publisher("/facc/raw_pi_weight", Float32, queue_size=10)
 
         self.euclidean = None
         self.velocity = None
@@ -300,7 +300,7 @@ class FuzzyController:
         rospy.spin()
 
 def main(stdscr):
-    with open("/home/heinrich/fuzzy_ws/src/fuzzy_core/config/fuzzy_rules.yaml", "r", encoding="utf-8") as file:
+    with open("/home/heinrich/fuzzy_ws/src/fuzzy_core/scripts/fuzzy_rules.yaml", "r", encoding="utf-8") as file:
         data = yaml.safe_load(file)
         embedding_rules = data["embedding_rules"]
         logic_rules = data["logic_rules"]

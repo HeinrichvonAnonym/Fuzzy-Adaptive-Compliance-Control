@@ -25,12 +25,12 @@ class FuzzyMonitor:
     def __init__(self):
         rospy.init_node('fuzzy_monitor', anonymous=True)
 
-        self.distance_pub = rospy.Publisher('/rrt/fuzzy/distance', Float32, queue_size=10)
-        self.velocity_pub = rospy.Publisher('/rrt/fuzzy/velocity', Float32, queue_size=10)
-        self.deuclidean_pub = rospy.Publisher('/rrt/fuzzy/d_euclidean', Float32, queue_size=10)
+        self.distance_pub = rospy.Publisher('/facc/fuzzy/distance', Float32, queue_size=10)
+        self.velocity_pub = rospy.Publisher('/facc/fuzzy/velocity', Float32, queue_size=10)
+        self.deuclidean_pub = rospy.Publisher('/facc/fuzzy/d_euclidean', Float32, queue_size=10)
 
-        rospy.Subscriber('/rrt/distance', Float32, self.distance_callback)
-        rospy.Subscriber('/rrt/euclidean', Float32, self.euclidean_callback)
+        rospy.Subscriber('/facc/distance', Float32, self.distance_callback)
+        rospy.Subscriber('/facc/euclidean', Float32, self.euclidean_callback)
 
         self.distance_buffer = Buffer(10)
         self.distance_vel = Buffer(10)
