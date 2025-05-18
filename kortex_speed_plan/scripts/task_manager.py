@@ -6,6 +6,14 @@ from std_srvs.srv import Empty, Trigger, TriggerRequest
 import yaml
 import numpy as np
 
+import yaml
+
+config_path = "/home/heinrich/kinova/src/kortex_speed_plan/config/dynamical_parameters.yaml"
+with open(config_path, "r", encoding="utf-8") as file:
+    config = yaml.safe_load(file)
+
+algo_name = config["algo_name"]
+
 IDLE = 0     # interrupt pd control
 HIGH = 1     # start pd control
 LOW = 2      # rise damping factor
@@ -38,18 +46,18 @@ class AL:
 class TaskManager:
     def __init__(self, config):
         rospy.init_node('task_manager', anonymous=True)
-        rospy.Subscriber("rrt/arrived", String, self.task_arrived_callback)
-        self.current_pose_subscriber = rospy.Subscriber("/rrt/robot_pose", PoseArray, self.current_pose_callback)
+        rospy.Subscriber(f"/{algo_name}/arrived", String, self.task_arrived_callback)
+        self.current_pose_subscriber = rospy.Subscriber(f"/{algo_name}/robot_pose", PoseArray, self.current_pose_callback)
 
-        self.go_on_subscriber = rospy.Subscriber("/rrt/robot_pose", PoseArray, self.current_pose_callback)
-        rospy.Subscriber("rrt/go_forward", String, self.go_forward_callback)
+        self.go_on_subscriber = rospy.Subscriber(f"/{algo_name}/robot_pose", PoseArray, self.current_pose_callback)
+        rospy.Subscriber(f"/{algo_name}/go_forward", String, self.go_forward_callback)
         rospy.Subscriber("/base_feedback/joint_state", JointState, self.joint_state_callback)
-        # self.current_pose_subscriber = rospy.Subscriber("/rrt/robot_pose", PoseArray, self.current_pose_callback)
+        # self.current_pose_subscriber = rospy.Subscriber(f"/{algo_name}/robot_pose", PoseArray, self.current_pose_callback)
 
-        self.pose_publisher = rospy.Publisher("/rrt/target_pose", PoseStamped, queue_size=10)
-        self.damping_publisher = rospy.Publisher("rrt/work_damping", Float32, queue_size=10)
-        self.idle_publisher = rospy.Publisher("rrt/idle", String, queue_size=5)
-        # self.tool_silence_publisher = rospy.Publisher("rrt/tool_silence", String, queue_size=10)
+        self.pose_publisher = rospy.Publisher(f"/{algo_name}/target_pose", PoseStamped, queue_size=10)
+        self.damping_publisher = rospy.Publisher(f"/{algo_name}/work_damping", Float32, queue_size=10)
+        self.idle_publisher = rospy.Publisher(f"/{algo_name}/idle", String, queue_size=5)
+        # self.tool_silence_publisher = rospy.Publisher(f"/{algo_name}/tool_silence", String, queue_size=10)
         self.config = config
         self._load_config(self.config)
         self.tar_pose = None
@@ -204,14 +212,19 @@ class TaskManager:
 
                     if  now - prev > 1:
                         self.damping_control()
-                        prev = now                       
+                        prev = now     
+            
+                
+            
             
             rospy.sleep(0.1)
               
 
+
 if __name__ == '__main__':
     config_path = "/home/heinrich/kinova/src/kortex_speed_plan/config/task.yaml"
     with open(config_path, "r", encoding="utf-8") as file:
-            data = yaml.safe_load(file)        
+            data = yaml.safe_load(file)
+           
     task_manager = TaskManager(data)
     task_manager.run()

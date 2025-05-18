@@ -17,34 +17,62 @@ from kortex_speed_plan.msg import SolidPrimitiveMultiArray
 from shape_msgs.msg import SolidPrimitive
 from visualization_msgs.msg import Marker, MarkerArray
 import math
+import yaml
 
 """
 control with force balance detection
 """
+config_path = "/home/heinrich/kinova/src/kortex_speed_plan/config/dynamical_parameters.yaml"
+with open(config_path, "r", encoding="utf-8") as file:
+    config = yaml.safe_load(file)
 
-USE_FUZZY = True
-smooth_att = 0.15
-k_att_base = 5000 # 基础引力系数
-human_k_rep = 2000
-obj_k_rep = 500
-k_att_cart = 8000
-k_lamda = 500
+algo_name = config["algo_name"]
+
+USE_FUZZY = config["USE_FUZZY"]
+# smooth_att = 0.15
+# k_att_base = 5000 # 基础引力系数
+
+# obj_k_rep = 500
+# k_att_cart = 8000
+# obj_influence_margin = 0.1
+# obj_safe_margin = 0.03
+
+smooth_att = config["smooth_att"]
+k_att_base = config["k_att_base"]
+obj_k_rep = config["obj_k_rep"]
+k_att_cart = config["k_att_cart"]
+k_mini = config["k_mini"]
+obj_influence_margin = config["obj_influence_margin"]
+obj_safe_margin = config["obj_safe_margin"]
+
 
 if not USE_FUZZY:
-    human_influence_margin = 0.35
-    human_safe_margin = 0.05
-    human_k_rep = 6000
-    k_lamda = 100
+    # human_influence_margin = 0.35
+    # human_safe_margin = 0.05
+    # human_k_rep = 6500
+    # k_lamda = 100
+    human_influence_margin = config["human_influence_margin_nf"]
+    human_safe_margin = config["human_safe_margin_nf"]
+    human_k_rep = config["human_k_rep_nf"]
+    k_lamda = config["k_lamda_nf"]
 else:
-    human_influence_margin = 0.8
-    human_safe_margin = 0.05
+    # human_k_rep = 1500
+    # human_influence_margin = 0.8
+    # human_safe_margin = 0.05
+    # k_lamda = 500
+    human_influence_margin = config["human_influence_margin"]
+    human_safe_margin = config["human_safe_margin"]
+    human_k_rep = config["human_k_rep"]
+    k_lamda = config["k_lamda"]
+    
 
-obj_influence_margin = 0.1
-obj_safe_margin = 0.03
+# END_EFFECTOR = 0
+# WRIST = 1
+# FOREARM = 2
 
-END_EFFECTOR = 0
-WRIST = 1
-FOREARM = 2
+END_EFFECTOR = config["END_EFFECTOR"]
+WRIST = config["WRIST"]
+FOREARM = config["FOREARM"]
 
 
 def angle_normalize(angles):
@@ -81,35 +109,35 @@ def pot_fuzzy_slot(fpi, att_potential, rep_potential):
 class APFController:
     def __init__(self):
         rospy.init_node("apf_controller", anonymous=True)
-        rospy.Subscriber("rrt/target_pos", JointState, self.target_callback)
+        rospy.Subscriber(f"/{algo_name}/target_pos", JointState, self.target_callback)
         rospy.Subscriber("/base_feedback/joint_state", JointState, self.joint_state_callback)
-        rospy.Subscriber("rrt/objects", SolidPrimitiveMultiArray, self.object_callback)
+        rospy.Subscriber(f"/{algo_name}/objects", SolidPrimitiveMultiArray, self.object_callback)
         rospy.Subscriber("/mrk/human_skeleton",MarkerArray, self.human_callback)
-        rospy.Subscriber("rrt/robot_pose", PoseArray, self.pose_callback)
-        rospy.Subscriber("rrt/jacobian", Float32MultiArray, self.jacobian_callback)
-        rospy.Subscriber("rrt/jacobian_6_dof", Float32MultiArray, self.jacobian_6_dof_callback)
-        rospy.Subscriber("rrt/jacobian_4_dof", Float32MultiArray, self.jacobian_4_dof_callback)
-        rospy.Subscriber("rrt/refresh", Int16, self.refresh_callback)
-        rospy.Subscriber("rrt/target_pose", PoseStamped, self.target_pose_callback)
-        rospy.Subscriber("/rrt/pi_weight", Float32, self.pi_subscriber)
-        rospy.Subscriber("rrt/ri_weight", Float32, self.ri_callback)
-        rospy.Subscriber("rrt/work_damping", Float32, self.work_damping_callback)
-        rospy.Subscriber("/rrt/joint_inertias", Float32MultiArray, self.inertia_callback)
-        # self.pi_publisher = rospy.Publisher("rrt/pi_weight", Float32, queue_size=10)
-        self.pid_command_pub = rospy.Publisher("rrt/pid_command", Float32MultiArray, queue_size=10)
-        self.rep_pub = rospy.Publisher("rrt/rep_vec", Marker, queue_size=10)
+        rospy.Subscriber(f"/{algo_name}/robot_pose", PoseArray, self.pose_callback)
+        rospy.Subscriber(f"/{algo_name}/jacobian", Float32MultiArray, self.jacobian_callback)
+        rospy.Subscriber(f"/{algo_name}/jacobian_6_dof", Float32MultiArray, self.jacobian_6_dof_callback)
+        rospy.Subscriber(f"/{algo_name}/jacobian_4_dof", Float32MultiArray, self.jacobian_4_dof_callback)
+        rospy.Subscriber(f"/{algo_name}/refresh", Int16, self.refresh_callback)
+        rospy.Subscriber(f"/{algo_name}/target_pose", PoseStamped, self.target_pose_callback)
+        rospy.Subscriber(f"/{algo_name}/pi_weight", Float32, self.pi_subscriber)
+        rospy.Subscriber(f"/{algo_name}/ri_weight", Float32, self.ri_callback)
+        rospy.Subscriber(f"/{algo_name}/work_damping", Float32, self.work_damping_callback)
+        rospy.Subscriber(f"/{algo_name}/joint_inertias", Float32MultiArray, self.inertia_callback)
+        # self.pi_publisher = rospy.Publisher(f"/{algo_name}/pi_weight", Float32, queue_size=10)
+        self.pid_command_pub = rospy.Publisher(f"/{algo_name}/pid_command", Float32MultiArray, queue_size=10)
+        self.rep_pub = rospy.Publisher(f"/{algo_name}/rep_vec", Marker, queue_size=10)
         
         # 添加DSM值发布器 - 区分人和物体
-        self.dsm_pub = rospy.Publisher("rrt/dsm_value", Float32MultiArray, queue_size=10)
+        self.dsm_pub = rospy.Publisher(f"/{algo_name}/dsm_value", Float32MultiArray, queue_size=10)
         
         # 添加对象类型和安全距离发布器
-        self.obj_info_pub = rospy.Publisher("rrt/object_info", Float32MultiArray, queue_size=10)
+        self.obj_info_pub = rospy.Publisher(f"/{algo_name}/object_info", Float32MultiArray, queue_size=10)
         
         # 添加引力和斥力发布器
-        self.force_pub = rospy.Publisher("rrt/force_values", Float32MultiArray, queue_size=10)
-        self.euclidean_pub =rospy.Publisher("/rrt/euclidean", Float32, queue_size=10)
-        self.distance_pub = rospy.Publisher("/rrt/distance", Float32, queue_size=10)
-        self.pot_rep_pub = rospy.Publisher("/rrt/pot_rep", Float32MultiArray, queue_size=10)
+        self.force_pub = rospy.Publisher(f"/{algo_name}/force_values", Float32MultiArray, queue_size=10)
+        self.euclidean_pub =rospy.Publisher(f"/{algo_name}/euclidean", Float32, queue_size=10)
+        self.distance_pub = rospy.Publisher(f"/{algo_name}/distance", Float32, queue_size=10)
+        self.pot_rep_pub = rospy.Publisher(f"/{algo_name}/pot_rep", Float32MultiArray, queue_size=10)
         
         self.target_pos = None
         self.target_cartesian_pose = None
@@ -501,7 +529,7 @@ class APFController:
         
         potential = potential - damping
         if USE_FUZZY:
-            potential *= (1 - self.ri_index * 0.95)
+            potential *= (1 - self.ri_index * k_mini)
         command_tar = self.cur_pos[:7] + self.dt * (self.cur_vel[:7] + self.dt * potential) / 2
         pid_command = Float32MultiArray()
         pid_command.data = command_tar.tolist()

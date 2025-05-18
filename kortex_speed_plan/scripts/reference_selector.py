@@ -15,23 +15,29 @@ from geometry_msgs.msg import PoseStamped, Pose
 import scipy.spatial.transform as transform
 import tf
 from tf.transformations import quaternion_from_matrix
+import yaml
 
+config_path = "/home/heinrich/kinova/src/kortex_speed_plan/config/dynamical_parameters.yaml"
+with open(config_path, "r", encoding="utf-8") as file:
+    config = yaml.safe_load(file)
+
+algo_name = config["algo_name"]
 
 USE_FUZZY = False
 INDEX_OFFSET = 2
 
 # theta d a alpha
-dh_params = np.array([
-    [0,           -(0.1564 + 0.1284),       0,          np.pi],
-    [0,             0,                      0,          np.pi / 2], 
-    [0,           -(0.2104 + 0.2104),       0,         -np.pi / 2],
-    [0,             0,                      0,          np.pi / 2],
-    [0,           -(0.2084 + 0.1059),       0,         -np.pi / 2],
-    [0,             0,                      0,          np.pi / 2],
-    [0,           -(0.1059 + 0.18),         0,         -np.pi / 2],
-    [0,            -0.18,                     0.,         np.pi],     # TOOL
-])
-
+# dh_params = np.array([
+#     [0,           -(0.1564 + 0.1284),       0,          np.pi],
+#     [0,             0,                      0,          np.pi / 2], 
+#     [0,           -(0.2104 + 0.2104),       0,         -np.pi / 2],
+#     [0,             0,                      0,          np.pi / 2],
+#     [0,           -(0.2084 + 0.1059),       0,         -np.pi / 2],
+#     [0,             0,                      0,          np.pi / 2],
+#     [0,           -(0.1059 + 0.18),         0,         -np.pi / 2],
+#     [0,            -0.18,                     0.,         np.pi],     # TOOL
+# ])
+dh_params = config["dh_params"]
 
 def dh_matrix(theta, d, a, alpha):
     ct, st = np.cos(theta), np.sin(theta)
@@ -82,20 +88,20 @@ def ref_fuzzy_slot(ri_weight, target_pos:list, pot_rep:list):
 class ReferenceSelector:
     def __init__(self):
         rospy.init_node("reference_selector", anonymous=True)
-        rospy.Subscriber("/rrt/cartesian_trajectory", RobotTrajectory, self.trajectory_callback)
+        rospy.Subscriber(f"/{algo_name}/cartesian_trajectory", RobotTrajectory, self.trajectory_callback)
         rospy.Subscriber("/base_feedback/joint_state", JointState, self.joint_state_callback)
-        rospy.Subscriber("/rrt/pot_rep", Float32MultiArray, self.pot_rep_callback)
-        rospy.Subscriber("rrt/ri_weight", Float32, self.ri_callback)
-        rospy.Subscriber("rrt/robot_pose", PoseArray, self.pose_callback)
-        rospy.Subscriber("rrt/work_damping", Float32, self.work_damping_callback)
-        self.target_pos_command = rospy.Publisher("rrt/target_pos", JointState, queue_size=10)
-        # self.prev_target_pos_command = rospy.Publisher("rrt/prev_target_pos", JointState, queue_size=10)
-        self.refresh_pub = rospy.Publisher("rrt/refresh", Int16, queue_size=10)
+        rospy.Subscriber(f"/{algo_name}/pot_rep", Float32MultiArray, self.pot_rep_callback)
+        rospy.Subscriber(f"/{algo_name}/ri_weight", Float32, self.ri_callback)
+        rospy.Subscriber(f"/{algo_name}/robot_pose", PoseArray, self.pose_callback)
+        rospy.Subscriber(f"/{algo_name}/work_damping", Float32, self.work_damping_callback)
+        self.target_pos_command = rospy.Publisher(f"/{algo_name}/target_pos", JointState, queue_size=10)
+        # self.prev_target_pos_command = rospy.Publisher(f"{algo_name}/prev_target_pos", JointState, queue_size=10)
+        self.refresh_pub = rospy.Publisher(f"{algo_name}/refresh", Int16, queue_size=10)
         
         # 添加参考选择器位置发布器
-        self.reference_selector_pub = rospy.Publisher("rrt/reference_selector_pos", Float32MultiArray, queue_size=10)
-        self.prev_reference_selector_pub = rospy.Publisher("rrt/prev_reference_selector_pos", Float32MultiArray, queue_size=10)
-        self.arrived_pub = rospy.Publisher("rrt/arrived", String, queue_size=10)
+        self.reference_selector_pub = rospy.Publisher(f"/{algo_name}/reference_selector_pos", Float32MultiArray, queue_size=10)
+        self.prev_reference_selector_pub = rospy.Publisher(f"/{algo_name}/prev_reference_selector_pos", Float32MultiArray, queue_size=10)
+        self.arrived_pub = rospy.Publisher(f"/{algo_name}/arrived", String, queue_size=10)
         
         self.joint_state = None
         self.trajectory = None

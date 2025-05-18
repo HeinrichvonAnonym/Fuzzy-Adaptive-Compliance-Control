@@ -10,6 +10,13 @@ import csv
 import os
 from datetime import datetime
 
+import yaml
+config_path = "/home/heinrich/kinova/src/kortex_speed_plan/config/dynamical_parameters.yaml"
+with open(config_path, "r", encoding="utf-8") as file:
+    config = yaml.safe_load(file)
+
+algo_name = config["algo_name"]
+
 class SimplifiedRobotDataCollector:
     def __init__(self):
         # 初始化节点
@@ -110,22 +117,22 @@ class SimplifiedRobotDataCollector:
         
         # 订阅相关话题
         rospy.Subscriber('/base_feedback/joint_state', JointState, self.joint_state_callback)
-        rospy.Subscriber('rrt/target_pos', JointState, self.target_pos_callback)
-        rospy.Subscriber('rrt/cartesian_trajectory', RobotTrajectory, self.trajectory_callback)
-        rospy.Subscriber('rrt/robot_pose', PoseArray, self.robot_pose_callback)
-        rospy.Subscriber('rrt/target_pose', PoseStamped, self.target_pose_callback)
-        rospy.Subscriber('rrt/dsm_value', Float32MultiArray, self.dsm_callback)
-        rospy.Subscriber('rrt/force_values', Float32MultiArray, self.force_values_callback)
-        rospy.Subscriber('rrt/trajectory_progress', Float32MultiArray, self.trajectory_progress_callback)
-        rospy.Subscriber('rrt/object_info', Float32MultiArray, self.object_info_callback)
+        rospy.Subscriber(f'/{algo_name}/target_pos', JointState, self.target_pos_callback)
+        rospy.Subscriber(f'/{algo_name}/cartesian_trajectory', RobotTrajectory, self.trajectory_callback)
+        rospy.Subscriber(f'/{algo_name}/robot_pose', PoseArray, self.robot_pose_callback)
+        rospy.Subscriber(f'/{algo_name}/target_pose', PoseStamped, self.target_pose_callback)
+        rospy.Subscriber(f'/{algo_name}/dsm_value', Float32MultiArray, self.dsm_callback)
+        rospy.Subscriber(f'/{algo_name}/force_values', Float32MultiArray, self.force_values_callback)
+        rospy.Subscriber(f'/{algo_name}/trajectory_progress', Float32MultiArray, self.trajectory_progress_callback)
+        rospy.Subscriber(f'/{algo_name}/object_info', Float32MultiArray, self.object_info_callback)
         rospy.Subscriber('/mrk/human_skeleton', MarkerArray, self.human_skeleton_callback)
-        rospy.Subscriber("rrt/prev_reference_selector_pos", Float32MultiArray, self.prev_target_callback)
-        rospy.Subscriber("/rrt/pi_weight", Float32, self.pi_callback)
-        rospy.Subscriber("/rrt/raw_pi_weight", Float32, self.raw_pi_callback)
-        rospy.Subscriber("rrt/ri_weight", Float32, self.ri_callback)
-        rospy.Subscriber("/rrt/fuzzy/d_euclidean", Float32, self.euclidean_callback)
-        rospy.Subscriber("/rrt/fuzzy/velocity", Float32, self.velocity_callback)
-        rospy.Subscriber("/rrt/fuzzy/distance", Float32, self.min_distance_callback)
+        rospy.Subscriber(f"/{algo_name}/prev_reference_selector_pos", Float32MultiArray, self.prev_target_callback)
+        rospy.Subscriber(f"/{algo_name}/pi_weight", Float32, self.pi_callback)
+        rospy.Subscriber(f"/{algo_name}/raw_pi_weight", Float32, self.raw_pi_callback)
+        rospy.Subscriber(f"/{algo_name}/ri_weight", Float32, self.ri_callback)
+        rospy.Subscriber(f"/{algo_name}/fuzzy/d_euclidean", Float32, self.euclidean_callback)
+        rospy.Subscriber(f"/{algo_name}/fuzzy/velocity", Float32, self.velocity_callback)
+        rospy.Subscriber(f"/{algo_name}/fuzzy/distance", Float32, self.min_distance_callback)
         
         # 设置数据记录频率
         self.record_rate = rospy.Rate(10)  # 10Hz

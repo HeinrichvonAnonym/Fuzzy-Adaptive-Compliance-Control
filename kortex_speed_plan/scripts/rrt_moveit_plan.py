@@ -18,6 +18,14 @@ from shape_msgs.msg import SolidPrimitive
 from std_msgs.msg import Float32MultiArray, MultiArrayDimension
 import math
 
+import yaml
+
+config_path = "/home/heinrich/kinova/src/kortex_speed_plan/config/dynamical_parameters.yaml"
+with open(config_path, "r", encoding="utf-8") as file:
+    config = yaml.safe_load(file)
+
+algo_name = config["algo_name"]
+
 
 critical_link_names = ["forearm_link", "tool_frame"]
 
@@ -29,18 +37,18 @@ class TrajectoryPlanner:
         moveit_commander.roscpp_initialize(sys.argv)
         self.arm = MoveGroupCommander("arm")
         self.robot = moveit_commander.RobotCommander()
-        rospy.Subscriber("rrt/target_pose", PoseStamped, self.target_callback)
-        self.trajectory_pub = rospy.Publisher("rrt/cartesian_trajectory", RobotTrajectory, queue_size=10)
+        rospy.Subscriber(f"/{algo_name}/target_pose", PoseStamped, self.target_callback)
+        self.trajectory_pub = rospy.Publisher(f"/{algo_name}/cartesian_trajectory", RobotTrajectory, queue_size=10)
         self.planning_scene_interface = PlanningSceneInterface("")
-        self.pose_publisher = rospy.Publisher("rrt/robot_pose", PoseArray, queue_size=10)
-        self.jacobian_pub = rospy.Publisher("rrt/jacobian", Float32MultiArray, queue_size=10)
-        self.object_pub = rospy.Publisher("rrt/objects", SolidPrimitiveMultiArray, queue_size=10)
+        self.pose_publisher = rospy.Publisher(f"/{algo_name}/robot_pose", PoseArray, queue_size=10)
+        self.jacobian_pub = rospy.Publisher(f"/{algo_name}/jacobian", Float32MultiArray, queue_size=10)
+        self.object_pub = rospy.Publisher(f"/{algo_name}/objects", SolidPrimitiveMultiArray, queue_size=10)
         
         # 添加规划统计和安全距离发布器
-        self.planning_stats_pub = rospy.Publisher("rrt/planning_stats", Float32MultiArray, queue_size=10)
-        self.min_distance_pub = rospy.Publisher("rrt/min_distance", Float32MultiArray, queue_size=10)
+        self.planning_stats_pub = rospy.Publisher(f"/{algo_name}/planning_stats", Float32MultiArray, queue_size=10)
+        self.min_distance_pub = rospy.Publisher(f"/{algo_name}/min_distance", Float32MultiArray, queue_size=10)
 
-        rospy.Subscriber("rrt/work_damping", Float32, self.work_damping_callback)
+        rospy.Subscriber(f"/{algo_name}/work_damping", Float32, self.work_damping_callback)
         
         self.primitive_arr = None
         self.pose_arr = None

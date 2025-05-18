@@ -6,6 +6,14 @@ import matplotlib.pyplot as plt
 import time
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
+import yaml
+
+
+config_path = "/home/heinrich/kinova/src/kortex_speed_plan/config/dynamical_parameters.yaml"
+with open(config_path, "r", encoding="utf-8") as file:
+    config = yaml.safe_load(file)
+
+algo_name = config["algo_name"]
 
 class PIDController:
     def __init__(self, kp, ki, kd, alpha = 0.3):
@@ -39,9 +47,9 @@ class PIDExecuter:
         self.joint_velocity_pub = rospy.Publisher("in/joint_velocity", Base_JointSpeeds, queue_size=10)
         
         # 添加误差发布器
-        self.joint_error_pub = rospy.Publisher("rrt/joint_error", Float32MultiArray, queue_size=10)
+        self.joint_error_pub = rospy.Publisher(f"/{algo_name}/joint_error", Float32MultiArray, queue_size=10)
         # 添加虚拟参考点发布器
-        self.virtual_reference_pub = rospy.Publisher("rrt/virtual_reference", Float32MultiArray, queue_size=10)
+        self.virtual_reference_pub = rospy.Publisher(f"/{algo_name}/virtual_reference", Float32MultiArray, queue_size=10)
 
         self.joint_state = None
         self.target_position = None
@@ -84,9 +92,9 @@ class PIDExecuter:
         self.is_idle = False
         self.screw = False
 
-        rospy.Subscriber("rrt/pid_command", Float32MultiArray, self.drive_callback)
+        rospy.Subscriber(f"/{algo_name}/pid_command", Float32MultiArray, self.drive_callback)
         rospy.Subscriber("/base_feedback/joint_state", JointState, self.joint_state_callback)
-        rospy.Subscriber("rrt/idle", String, self.idle_callback)
+        rospy.Subscriber(f"/{algo_name}/idle", String, self.idle_callback)
 
         self.init_dt = 0.01
         self.dt = 0.01

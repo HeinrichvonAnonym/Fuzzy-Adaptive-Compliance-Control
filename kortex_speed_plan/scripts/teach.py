@@ -6,6 +6,15 @@ import pynput
 from pynput import keyboard
 import yaml
 
+import yaml
+
+
+config_path = "/home/heinrich/kinova/src/kortex_speed_plan/config/dynamical_parameters.yaml"
+with open(config_path, "r", encoding="utf-8") as file:
+    config = yaml.safe_load(file)
+
+algo_name = config["algo_name"]
+
 PREPARE = 0
 WORK = 1
 IDLE = 2
@@ -14,7 +23,7 @@ WAIT = 3
 class KortexTeach:
     def __init__(self, output):
         rospy.init_node("kortex_teach", anonymous=True)
-        rospy.Subscriber("rrt/robot_pose", PoseArray, self.current_pose_callback)
+        rospy.Subscriber(f"/{algo_name}/robot_pose", PoseArray, self.current_pose_callback)
 
         self.eef_pose = None
         self.teached_poses = []
@@ -26,7 +35,7 @@ class KortexTeach:
 
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.output = output
-        self.idle_publisher = rospy.Publisher("rrt/idle", String, queue_size=5)
+        self.idle_publisher = rospy.Publisher(f"/{algo_name}/idle", String, queue_size=5)
     
     def current_pose_callback(self, pose_array_msg):
         self.eef_pose = pose_array_msg.poses[0]
@@ -117,6 +126,6 @@ class KortexTeach:
         self.listener.join()
 
 if __name__ == '__main__':
-    output = "/home/heinrich/kinova/src/kortex_speed_plan/config/task.yaml"
+    output = "/home/heinrich/kinova/src/kortex_speed_plan/scripts/task.yaml"
     teach = KortexTeach(output)
     teach.run()

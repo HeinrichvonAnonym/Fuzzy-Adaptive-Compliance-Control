@@ -5,28 +5,45 @@ import numpy as np
 from std_msgs.msg import Float32MultiArray
 from geometry_msgs.msg import PoseArray, PoseStamped
 import tf.transformations as tr
+import yaml
 
-link_names = ["shoulder_link", "half_arm_1_link", "half_arm_2_link", "forearm_link", "spherical_wrist_1_link", "spherical_wrist_2_link", "tool_frame"]
-jointstate_msg_topic = '/joint_states'
-base_link = "base_link"
-eef_link_names = ["tool_frame", "spherical_wrist_2_link", "forearm_link"]
-dofs = [7, 6, 4]
+config_path = "/home/heinrich/kinova/src/kortex_speed_plan/config/dynamical_parameters.yaml"
+with open(config_path, "r", encoding="utf-8") as file:
+        config = yaml.safe_load(file)
+algo_name = config["algo_name"]
 
-tool_mass = 0
-tool_com = [0, 0, 0]
+# link_names = ["shoulder_link", "half_arm_1_link", "half_arm_2_link", "forearm_link", "spherical_wrist_1_link", "spherical_wrist_2_link", "tool_frame"]
+# jointstate_msg_topic = '/joint_states'
+# base_link = "base_link"
+# eef_link_names = ["tool_frame", "spherical_wrist_2_link", "forearm_link"]
+# dofs = [7, 6, 4]
 
-link_params = {
-    # name: [mass, [com_x, com_y, com_z], [I_xx, I_yy, I_zz, I_xy, I_xz, I_yz]]
-    'shoulder_link': [1.4699, [-2.522E-05, -0.0075954, -0.088651], [0.0043269, 0.0044703, 0.0014532, 2.5E-07, 9.4E-07, 0.0001016]],
-    'half_arm_1_link': [1.2357745, [-4.533E-05, -0.12951716, -0.01354356], [0.0115879, 0.00104574, 0.0116684, -1.05E-06, 5E-08, -0.00096902]],
-    'half_arm_2_link': [1.2357745, [-4.533E-05, -0.00361448, -0.14407154], [0.01009873, 0.01017801, 0.00104697, 5.7E-07, 1.89E-06, 0.00013166]],
-    'forearm_link': [0.89954802, [-0.00030188, -0.104938, -0.01559665], [0.00889854, 0.00060297, 0.00898975, 1.98E-05, -2.39E-06, -0.00074456]],
-    'spherical_wrist_1_link': [0.70588351, [-0.00035363, -0.00659443, -0.07560343], [0.00145671, 0.00145189, 0.00039299, 3.35E-06, 7.62E-06, 0.00012055]],
-    'spherical_wrist_2_link': [0.70583924, [-0.00035547, -0.06159424, -0.00850171], [0.00187208, 0.00041077, 0.0018494, 6.1E-06, -2.17E-06, -0.00033774]],
-    'tool_frame': [0.31573861 + tool_mass, [ (tool_com[0] * tool_mass + 0.31573861 * -0.00010337) / (tool_mass + 0.31573861),
-                                               (tool_com[1] * tool_mass + 0.31573861 * 0.00015804)/ (tool_mass + 0.31573861),
-                                               (tool_com[2] * tool_mass + 0.31573861 * -0.02874642) / (tool_mass + 0.31573861)],
-                                               [0.00018712, 0.00019576, 0.0002257, 6E-08, 7.7E-07, -1.62E-06]]}
+link_names = config['link_names']
+jointstate_msg_topic = config['jointstate_msg_topic']
+base_link = config['base_link']
+eef_link_names = config['eef_link_names']
+dofs = config['dofs']
+
+# tool_mass = 0
+# tool_com = [0, 0, 0]
+
+tool_mass = config['tool_mass']
+tool_com = np.array(config['tool_com'])
+
+# link_params = {
+    # # name: [mass, [com_x, com_y, com_z], [I_xx, I_yy, I_zz, I_xy, I_xz, I_yz]]
+    # 'shoulder_link': [1.4699, [-2.522E-05, -0.0075954, -0.088651], [0.0043269, 0.0044703, 0.0014532, 2.5E-07, 9.4E-07, 0.0001016]],
+    # 'half_arm_1_link': [1.2357745, [-4.533E-05, -0.12951716, -0.01354356], [0.0115879, 0.00104574, 0.0116684, -1.05E-06, 5E-08, -0.00096902]],
+    # 'half_arm_2_link': [1.2357745, [-4.533E-05, -0.00361448, -0.14407154], [0.01009873, 0.01017801, 0.00104697, 5.7E-07, 1.89E-06, 0.00013166]],
+    # 'forearm_link': [0.89954802, [-0.00030188, -0.104938, -0.01559665], [0.00889854, 0.00060297, 0.00898975, 1.98E-05, -2.39E-06, -0.00074456]],
+    # 'spherical_wrist_1_link': [0.70588351, [-0.00035363, -0.00659443, -0.07560343], [0.00145671, 0.00145189, 0.00039299, 3.35E-06, 7.62E-06, 0.00012055]],
+    # 'spherical_wrist_2_link': [0.70583924, [-0.00035547, -0.06159424, -0.00850171], [0.00187208, 0.00041077, 0.0018494, 6.1E-06, -2.17E-06, -0.00033774]],
+    # 'tool_frame': [0.31573861 + tool_mass, [ (tool_com[0] * tool_mass + 0.31573861 * -0.00010337) / (tool_mass + 0.31573861),
+    #                                            (tool_com[1] * tool_mass + 0.31573861 * 0.00015804)/ (tool_mass + 0.31573861),
+    #                                            (tool_com[2] * tool_mass + 0.31573861 * -0.02874642) / (tool_mass + 0.31573861)],
+    #                                            [0.00018712, 0.00019576, 0.0002257, 6E-08, 7.7E-07, -1.62E-06]]}
+
+link_params = config['link_params']
 
 def get_tf_matrix(tf_listener, base_link_name, target_link_name):
     try:
@@ -41,11 +58,11 @@ class JacobianPublisher():
         rospy.init_node('jacobian_publisher', anonymous=True)
         rospy.Subscriber(jointstate_msg_topic, JointState, self.jointstate_cb)
         self.tf_listener = tf.TransformListener()
-        self.jacobian_publishers = [rospy.Publisher('/rrt/jacobian', Float32MultiArray, queue_size=10),
-                                    rospy.Publisher('/rrt/jacobian_6_dof', Float32MultiArray, queue_size=10),
-                                    rospy.Publisher('/rrt/jacobian_4_dof', Float32MultiArray, queue_size=10)]
-        self.pose_publisher = rospy.Publisher("rrt/robot_pose", PoseArray, queue_size=10)
-        self.joint_inertias_publisher = rospy.Publisher('/rrt/joint_inertias', Float32MultiArray, queue_size=10)
+        self.jacobian_publishers = [rospy.Publisher(f'/{algo_name}/jacobian', Float32MultiArray, queue_size=10),
+                                    rospy.Publisher(f'/{algo_name}/jacobian_6_dof', Float32MultiArray, queue_size=10),
+                                    rospy.Publisher(f'/{algo_name}/jacobian_4_dof', Float32MultiArray, queue_size=10)]
+        self.pose_publisher = rospy.Publisher(f"/{algo_name}/robot_pose", PoseArray, queue_size=10)
+        self.joint_inertias_publisher = rospy.Publisher(f'/{algo_name}/joint_inertias', Float32MultiArray, queue_size=10)
         
         self.joint_states = None
         self.joint_inertias = None
