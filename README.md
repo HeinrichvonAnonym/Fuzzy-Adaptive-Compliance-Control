@@ -1,18 +1,18 @@
-# Fuzzy-Adaptive-Compliance-Control
+## Fuzzy-Adaptive-Compliance-Control
 Speed and Trajectory Optimization for Safe Human Robot Collaboration
 
- requirements：
+# requirements：
 
-    envirionment:
+envirionment:
 
-        ubuntu 20.04
-        ros noetic (ros melodic is not supported)
-        python3.x
+    ubuntu 20.04
+    ros noetic (ros melodic is not supported)
+    python3.x
 
-    you should have the low-level control interface of your robot and adjust the communication of pid_executer
-    In this case kortex kinova gen3 is used
+you should have the low-level control interface of your robot and adjust the communication of pid_executer
+In this case kortex kinova gen3 is used
 
-    TODO: remove the coupled code of gen3 plattform
+TODO: remove the coupled code of gen3 plattform
     
 
 
