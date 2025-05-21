@@ -1,7 +1,7 @@
-## Fuzzy-Adaptive-Compliance-Control
+# Fuzzy-Adaptive-Compliance-Control
 Speed and Trajectory Optimization for Safe Human Robot Collaboration
 
-# requirements：
+## requirements：
 
 envirionment:
 
