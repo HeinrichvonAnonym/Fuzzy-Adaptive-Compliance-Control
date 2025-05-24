@@ -32,12 +32,12 @@ notice! hardware drivers and interfaces is not included, you should install them
 ##   Usage
 ### modify:
 you should modify the keys in ./src/speed_plan/config/dynamical_parameters.yaml:
-    ##    hard_ware_jointstate_topic: YOUR_HARD_WARE_JOINTSTATE_TOPIC
-    ##    control_input_name: YOUR_CONTROL_INPUT_NAME
-    ##    control_interface_class: YOUR_CONTROL_INTERFACE_CLASS
-    ##    principle is as following:
-    ##    | THIS_REPO |  <--sensor_msgs::JointState YOUR_HARD_WARE_JOINTSTATE_TOPIC---- | HARDWARE_DRIVER |
-    ##    |           |  ---YOUR_CONTROL_INTERFACE_CLASS YOUR_CONTROL_INPUT_NAME -----> |                 |
+    hard_ware_jointstate_topic: YOUR_HARD_WARE_JOINTSTATE_TOPIC
+    control_input_name: YOUR_CONTROL_INPUT_NAME
+    control_interface_class: YOUR_CONTROL_INTERFACE_CLASS
+    principle is as following:
+    | THIS_REPO |  <--sensor_msgs::JointState YOUR_HARD_WARE_JOINTSTATE_TOPIC---- | HARDWARE_DRIVER |
+    |           |  ---YOUR_CONTROL_INTERFACE_CLASS YOUR_CONTROL_INPUT_NAME -----> |                 |
 
 and:
     ##    link_names # optional
@@ -49,6 +49,7 @@ if you are using kinova kortex gen3 or franka panda, you can directly use the ex
 TODO: parse of config file to launch file (currenty manually)
 
 ### run (e.g. gen3):
+
     ## launch the kortex driver
     roslaunch kortex_driver kortex_arm_driver.launch ip_address:=YOUR_IP_ADDRESS
     ## launch the core nodes
