@@ -1,0 +1,31 @@
+<launch>
+
+ 
+
+  <include file="$(find gen3_robotiq_2f_85_move_it_config)/launch/demo_act.launch"/>
+
+   <node pkg="speed_plan" type="jacobian_publisher.py" name="jacobian" output="screen">
+  </node>
+
+
+  <node pkg="speed_plan" type="sim_pid_executer.py" name="pid_executer" output="screen">
+  </node>
+
+  <node pkg="speed_plan" type="reference_selector.py" name="reference_selector" output="log">
+  </node>
+  
+
+  <node pkg="speed_plan" type="rrt_moveit_plan.py" name="rrt_moveit_plan" output="log">
+  </node>
+  
+
+  <node pkg="speed_plan" type="apf_controller.py" name="apf_controller" output="log">
+  </node>
+
+  <node pkg="fuzzy_core" type="fuzzy_monitor.py" name="fuzzy_monitor" output="log">
+  </node>
+
+  <node pkg="fuzzy_core" type="fuzzy_controller.py" name="fuzzy_controller" output="log">
+  </node> 
+
+</launch>

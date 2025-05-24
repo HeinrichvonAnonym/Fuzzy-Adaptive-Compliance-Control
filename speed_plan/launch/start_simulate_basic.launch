@@ -1,0 +1,8 @@
+<launch>
+  <node pkg="speed_plan" type="task_manager.py" name="task_manager" output="screen">
+  </node>
+  <node pkg="human_interface" type="sim_human_frame_subscriber.py" name="basic_human_interface" output="screen">
+  </node>
+   <node pkg="speed_plan" type="data_collector.py" name="data_collector" output="screen">
+  </node>
+</launch>
