@@ -32,17 +32,19 @@ notice! hardware drivers and interfaces is not included, you should install them
 ##   Usage
 ### modify:
 you should modify the keys in ./src/speed_plan/config/dynamical_parameters.yaml:
-    hard_ware_jointstate_topic: YOUR_HARD_WARE_JOINTSTATE_TOPIC
-    control_input_name: YOUR_CONTROL_INPUT_NAME
-    control_interface_class: YOUR_CONTROL_INTERFACE_CLASS
+
+    hard_ware_jointstate_topic: ${YOUR_HARD_WARE_JOINTSTATE_TOPIC}
+    control_input_name: ${YOUR_CONTROL_INPUT_NAME}
+    control_interface_class: ${YOUR_CONTROL_INTERFACE_CLASS}
     principle is as following:
     | THIS_REPO |  <--sensor_msgs::JointState YOUR_HARD_WARE_JOINTSTATE_TOPIC---- | HARDWARE_DRIVER |
     |           |  ---YOUR_CONTROL_INTERFACE_CLASS YOUR_CONTROL_INPUT_NAME -----> |                 |
 
 and:
-    ##    link_names # optional
-    ##    link_params # dynamical params, not optional
-    ##    dh_params # optional
+
+    link_names: ${YOUR_LINK_NAMES} # optional
+    link_params: ${YOUR_LINK_PARAMS} # dynamical params, not optional
+    dh_params: ${YOUR_DH_PARAMS} # optional
 
 if you are using kinova kortex gen3 or franka panda, you can directly use the existing config files.
 
