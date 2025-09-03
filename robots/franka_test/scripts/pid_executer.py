@@ -1,4 +1,19 @@
 #!/usr/bin/env python
+
+"""
+copyright (c) 2025-present Heinrich 2130238@tongji.edu.cn.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+"""
+
 import rospy
 from sensor_msgs.msg import JointState
 import numpy as np
@@ -46,19 +61,19 @@ class PIDExecuter:
 
         self.pid_controllers = []
 
-        self.pid_controllers.append(PIDController(0.6, 0.0, 0.00, 0.5))
-        self.pid_controllers.append(PIDController(0.6, 0.0, 0.00, 0.7))
-        self.pid_controllers.append(PIDController(0.6, 0.0, 0.00, 0.5))
-        self.pid_controllers.append(PIDController(0.6, 0.000, 0.00, 0.7))
-        self.pid_controllers.append(PIDController(0.6, 0.0, 0.00))
-        self.pid_controllers.append(PIDController(0.6, 0.0, 0.00, 0.5))
-        self.pid_controllers.append(PIDController(0.6, 0.0, 0.0))
+        self.pid_controllers.append(PIDController(1.2, 0.0, 0.05, 0.5))
+        self.pid_controllers.append(PIDController(1.2, 0.0, 0.05, 0.7))
+        self.pid_controllers.append(PIDController(1.2, 0.0, 0.05, 0.5))
+        self.pid_controllers.append(PIDController(1.2, 0.000, 0.05, 0.7))
+        self.pid_controllers.append(PIDController(1.2, 0.0, 0.05))
+        self.pid_controllers.append(PIDController(1.2, 0.0, 0.05, 0.5))
+        self.pid_controllers.append(PIDController(0.9, 0.0, 0.05))
 
         self.is_idle = False
         self.screw = False
 
         rospy.Subscriber("/base_feedback/joint_state", JointState, self.joint_state_callback)
-        rospy.Subscriber("/move_group/fake_controller_joint_states", JointState, self.drive_callback)
+        rospy.Subscriber("/facc/pid_command", Float32MultiArray, self.drive_callback)
         self.init_dt = 0.01
         self.dt = 0.01
         self.cur_time = rospy.Time.now()
@@ -77,7 +92,7 @@ class PIDExecuter:
 
         
     def drive_callback(self, msg):
-        self.target_position = msg.position[:7]
+        self.target_position = msg.data[:7]
         
     
 
