@@ -1,0 +1,66 @@
+algo_name: "facc" # to replace the topic ns: rrt
+
+link_names: 
+  - "panda_link1"
+  - "panda_link2"
+  - "panda_link3"
+  - "panda_link4"
+  - "panda_link5"
+  - "panda_link6"
+  - "panda_link7"
+  - "panda_hand"
+
+hard_ware_jointstate_topic: "/base_feedback/joint_state"
+jointstate_msg_topic: "/base_feedback/joint_state"
+control_input_name: "/desired_velocity"
+control_interface_class: 'Float32MultiArray'
+base_link: "panda_link0"
+eef_link_names: 
+  - "panda_grip_site"
+  - "panda_link6"
+  - "panda_link4"
+dofs: [7, 6, 4]
+
+tool_mass: 0
+tool_com: [0, 0, 0]
+
+NO_INERTIA: True
+
+link_params: None
+
+# theta d a alpha
+dh_params:
+  - [0,   -0.2848,  0,  3.141592653589793]
+  - [0,   0,        0,  1.5707963267948966]
+  - [0,   -0.4208,  0,  -1.5707963267948966]
+  - [0,   0,        0,  1.5707963267948966]
+  - [0,   -0.3143,  0,  -1.5707963267948966]
+  - [0,   0,        0,  1.5707963267948966]
+  - [0,   -0.2859,  0,  -1.5707963267948966]
+  - [0,   -0.18,    0,  3.141592653589793]
+
+USE_FUZZY: False
+
+smooth_att: 0.15
+k_att_base: 2800
+obj_k_rep: 100
+k_att_cart: 100
+k_mini: 0.9
+
+# if not USE_FUZZY:
+human_influence_margin_nf: 0.4
+human_safe_margin_nf: 0.05
+human_k_rep_nf: 1800
+k_lamda_nf: 100
+# else:
+human_influence_margin: 0.8
+human_safe_margin: 0.05
+human_k_rep: 40
+k_lamda: 100
+
+obj_influence_margin: 0.1
+obj_safe_margin: 0.03
+
+END_EFFECTOR: 0
+WRIST: 1
+FOREARM: 2

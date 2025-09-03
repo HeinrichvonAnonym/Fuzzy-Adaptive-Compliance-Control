@@ -220,6 +220,7 @@ class TaskManager:
             
             
             rospy.sleep(0.1)
+        rospy.spin()
               
 
 
