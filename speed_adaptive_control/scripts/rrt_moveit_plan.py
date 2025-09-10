@@ -123,7 +123,8 @@ class TrajectoryPlanner:
         
         target_pose = Pose()
         target_pose.position = self.target_position
-        target_pose.orientation = self.arm.get_current_pose("panda_grip_site").pose.orientation
+        target_pose.orientation = self.target_orientation
+        # target_pose.orientation = self.arm.get_current_pose("panda_grip_site").pose.orientation
 
         self.arm.set_pose_target(pose=target_pose, end_effector_link="panda_grip_site")     
         success, plan, planning_time, error_code_2 = self.arm.plan()

@@ -42,7 +42,7 @@ dh_params:
 USE_FUZZY: False
 
 smooth_att: 0.15
-k_att_base: 2800
+k_att_base: 3200
 obj_k_rep: 100
 k_att_cart: 100
 k_mini: 0.9
@@ -50,7 +50,7 @@ k_mini: 0.9
 # if not USE_FUZZY:
 human_influence_margin_nf: 0.4
 human_safe_margin_nf: 0.05
-human_k_rep_nf: 1800
+human_k_rep_nf: 2400
 k_lamda_nf: 100
 # else:
 human_influence_margin: 0.8
