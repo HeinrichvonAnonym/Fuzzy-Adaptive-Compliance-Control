@@ -52,6 +52,7 @@ class TrajectoryPlanner:
         rospy.Subscriber("cube_pose", Marker, self.target_callback)
         self.trajectory_pub = rospy.Publisher(f"/{algo_name}/cartesian_trajectory", RobotTrajectory, queue_size=10)
         self.tar_pose_pub = rospy.Publisher(f"/{algo_name}/target_pose", PoseStamped, queue_size=10)
+        self.arrived_publisher = rospy.Publisher(f"/{algo_name}/arrived", String, queue_size=5)
         self.planning_scene_interface = PlanningSceneInterface("")
         self.add_ground()
         
@@ -98,7 +99,9 @@ class TrajectoryPlanner:
         q_rot = np.zeros(4)
         q_rot[1] = 1
         q_cube = np.array([msg.pose.orientation.w, msg.pose.orientation.x, msg.pose.orientation.y, msg.pose.orientation.z])
-        q_tar = quat_mul(q_rot, q_cube)
+        # q_tar = quat_mul(q_rot, q_cube)
+
+        q_tar =  q_cube
 
         self.target_orientation = Quaternion()
         self.target_orientation.w = q_tar[0]
@@ -169,18 +172,26 @@ class TrajectoryPlanner:
                                         np.array([cur_pose.position.x, 
                                                 cur_pose.position.y, 
                                                 cur_pose.position.z]))
-        if position_diff > 0.01:
+        if position_diff < 0.01:
             return True
         else:
             return False
     
     def run(self):
+        arrrived_lock = False
         while not rospy.is_shutdown():
             cur_time = rospy.Time.now()
             if (cur_time - self.prev_time).to_sec() > 1 or self.check_target_changed():     
                 if not self.check_target_reached():
                     rospy.loginfo("Target not reached")
+                    arrrived_lock = False
                     # if self.check_target_changed():
+                else:
+                    if arrrived_lock:
+                        continue
+                    self.arrived_publisher.publish("pass")
+                    arrrived_lock = True
+                    rospy.loginfo("Target reached >>>>>>>>>>>>>>>>>>>>>>")
                 self.plan_to_target()
                 self.prev_time = cur_time
             

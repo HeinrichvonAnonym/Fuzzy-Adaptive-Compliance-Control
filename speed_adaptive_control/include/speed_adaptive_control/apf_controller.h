@@ -1,15 +1,3 @@
-// copyright (c) 2025-present Heinrich 2130238@tongji.edu.cn.
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-
-//     http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
 #include<ros/ros.h>
 #include<sensor_msgs/JointState.h>
 #include<std_msgs/Float32.h>
@@ -30,13 +18,13 @@ class APF_Controller{
         APF_Controller(ros::NodeHandle nh);
         ~APF_Controller();
         // basical callbacks
-        void target_callback(const std_msgs::Float32MultiArray::ConstPtr& msg);
-        void joint_state_callback(const sensor_msgs::JointState::ConstPtr& msg);
+        // void target_callback(const std_msgs::Float32MultiArray::ConstPtr& msg);
+        // void joint_state_callback(const sensor_msgs::JointState::ConstPtr& msg);
         void human_callback(const visualization_msgs::MarkerArray::ConstPtr& msg);
-        void jacobian_callback(const std_msgs::Float32MultiArray::ConstPtr& msg);
-        void jacobian_6_dof_callback(const std_msgs::Float32MultiArray::ConstPtr& msg);
-        void jacobian_4_dof_callback(const std_msgs::Float32MultiArray::ConstPtr& msg);
-        void robot_pose_callback(const geometry_msgs::PoseArray::ConstPtr& msg);
+        // void jacobian_callback(const std_msgs::Float32MultiArray::ConstPtr& msg);
+        // void jacobian_6_dof_callback(const std_msgs::Float32MultiArray::ConstPtr& msg);
+        // void jacobian_4_dof_callback(const std_msgs::Float32MultiArray::ConstPtr& msg);
+        // void robot_pose_callback(const geometry_msgs::PoseArray::ConstPtr& msg);
         void att_sacle_callback(const std_msgs::Float32::ConstPtr& msg);
         // optional callbacks
 
@@ -54,6 +42,8 @@ class APF_Controller{
         // optional functions
         std::array<double, 7> cal_command(std::array<double, 7> potential);
         std::array<double, 7> angle_normalize(std::array<double, 7> vec);
+        std::array<double, 7> get_vel(std::array<double, 7>& qr);
+        void publish_vel(std::array<double, 7>& qv);
         void set_params();
         ////////////////////////////////
 
@@ -88,7 +78,7 @@ class APF_Controller{
         // dynamic////////////////////////////////////
         std::array<double, 7> cur_pos;
         std::array<double, 7> cur_vel;
-        bool got_cur_pos = false; 
+        bool got_cur_pos = true; 
         std::array<double, 7> target_pos;
         bool got_target_pos = false;
         std::array<std::array<double, 3>, 33> human_poses;
@@ -107,14 +97,16 @@ class APF_Controller{
         std::array<double, 7> K_D;
 
 
-        Eigen::Matrix<double, 6, 7> jacobian;
-        bool got_jacobian = false;
-        Eigen::Matrix<double, 6, 6> jacobian_6_dof;
-        bool got_jacobian_6_dof = false;
-        Eigen::Matrix<double, 6, 4> jacobian_4_dof;
-        bool got_jacobian_4_dof = false;
-        std::array<std::array<double, 3>, 3> robot_poses;
-        bool got_robot_poses = false;
+        Eigen::Matrix<double, 6, 7>* jacobian;
+        Eigen::Matrix<double, 6, 6>* jacobian_6_dof;
+        Eigen::Matrix<double, 6, 5>* jacobian_5_dof;
+        Eigen::Matrix<double, 6, 4>* jacobian_4_dof;
+        geometry_msgs::PoseArray* robot_poses;
+
+        std::array<double, 3> res_rep_vec;
+        std::array<double, 3> inf_pos;
+        double vec_distance;
+        double max_rep_norm = 0.;
 
         double att_scale = 1.0;
 
@@ -122,18 +114,22 @@ class APF_Controller{
         visualization_msgs::Marker vis_thr;
         visualization_msgs::MarkerArray ma;
 
+        std::array<double,7> att_potential{}, rep_potential{}, potential{}, command{};
+
         // optional params
 
         ///////////////////////////////
 
     private:
-        ros::Subscriber target_sub;
-        ros::Subscriber joint_state_sub;
+        // ros::Subscriber target_sub;
+        // ros::Subscriber joint_state_sub;
         ros::Subscriber human_sub;
-        ros::Subscriber jacobian_sub;
-        ros::Subscriber jacobian_4_dof_sub;
-        ros::Subscriber jacobian_6_dof_sub;
+        // ros::Subscriber jacobian_sub;
+        // ros::Subscriber jacobian_4_dof_sub;
+        // ros::Subscriber jacobian_6_dof_sub;
         ros::Subscriber att_scale_sub;
-        ros::Subscriber robot_pose_sub;
+        // ros::Subscriber robot_pose_sub;
+
+        ros::AsyncSpinner spinner(uint32_t thread_num = 4);
         
 };

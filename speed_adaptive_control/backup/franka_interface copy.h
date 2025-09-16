@@ -1,15 +1,3 @@
-// copyright (c) 2025-present Heinrich 2130238@tongji.edu.cn.
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-
-//     http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
 #include<ros/ros.h>
 #include<sensor_msgs/JointState.h>
 #include<std_msgs/Float32.h>
@@ -28,6 +16,7 @@
 #include <franka/model.h>
 #include <franka/robot_state.h>
 #include <franka/exception.h>
+#include <mutex>
 
 class Franka_Interface { 
     public:
@@ -47,21 +36,40 @@ class Franka_Interface {
         double dq_step_limit1;    // max dt
         double max_qoffset_abs;
         double max_tau;
+        double dq_step_limit; 
         franka::RobotState state;
         franka::RobotState init_state;
         std::array<double, 7> q_initial;
         std::array<double, 7> q_cmd;
         std::array<double, 7> q_offset;
 
-        std::array<double, 7> potential;
-        bool got_command = false;
+        std::array<double, 7> cur_q;
+        std::array<double, 7> cur_vel;;
+
+        std::array<double, 7> desired_velocity = {0,0,0,0,0,0,0};
         
-        std::array<double, 7> angle_normalize(std::array<double, 7> vec);
-        void potential_command_sub(const std_msgs::Float32MultiArray::ConstPtr& msg);
+        void set_velo(std::array<double, 7>& desired_velo);
         void set_params();
-        void run();
+        void start();
+        void join();
         void control_loop(franka::Robot& robot);
         void gripper_control_loop(franka::Gripper& gripper); 
+
+        std::thread control_thread;
+        std::thread gripper_thread;
     private:
-        ros::Subscriber potential_sub;
+        franka::Robot robot;
+        franka::Gripper gripper;
+
+        Eigen::Vector3d dx;
+        Eigen::Matrix3d JJt;
+        Eigen::Vector3d f_lp;
+        Eigen::Matrix<double, 7, 3> J_pinv;
+        Eigen::Matrix<double, 7, 1> dq_c;
+        std::array<double, 42> jacobian_array;
+        Eigen::Matrix<double, 3, 7> Jv;
+        Eigen::Matrix3d I3d = Eigen::Matrix3d::Identity();
+
+        sensor_msgs::JointState joint_msg;
+        std::mutex velocity_mutex;
 };

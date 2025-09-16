@@ -138,8 +138,12 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(apf_controller src/apf_controller.cpp)
-add_executable(franka_interface src/franka_interface.cpp)
+# add_executable(apf_controller src/apf_controller.cpp)
+# add_executable(franka_interface src/franka_interface.cpp)
+# add_executable(jacobian_pub src/jacobian_calculator.cpp)
+# add_executable(reference_selector src/reference_selector.cpp)
+add_executable(mpc_governor src/mpc_governor.cpp src/reference_selector.cpp src/apf_controller.cpp
+src/jacobian_calculator.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -152,15 +156,26 @@ add_executable(franka_interface src/franka_interface.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(apf_controller
-  ${catkin_LIBRARIES}
-)
+# target_link_libraries(apf_controller
+#   ${catkin_LIBRARIES}
+# )
 
-target_link_libraries(franka_interface
+# target_link_libraries(franka_interface
+#   ${catkin_LIBRARIES}
+#   ${Franka_LIBRARIES}
+# )
+# target_link_libraries(jacobian_pub
+#   ${catkin_LIBRARIES}
+#   ${Franka_LIBRARIES}
+# )
+# target_link_libraries(reference_selector
+#   ${catkin_LIBRARIES}
+# )
+
+target_link_libraries(mpc_governor
   ${catkin_LIBRARIES}
   ${Franka_LIBRARIES}
 )
-
 #############
 ## Install ##
 #############
@@ -175,6 +190,8 @@ catkin_install_python(PROGRAMS
   scripts/jacobian_publisher.py
   scripts/rrt_moveit_plan.py
   scripts/reference_selector.py
+  scripts/teach.py
+  scripts/task_manager.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
